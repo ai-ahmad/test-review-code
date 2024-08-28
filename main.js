@@ -1,10 +1,7 @@
-let loadingWrapper = document.querySelector("#loadingWrapper");
 let products = document.querySelector("#products");
 let input = document.querySelector("input");
-let button = document.querySelector("button");
 
 let allProducts = [];
-
 
 fetch('https://raw.githubusercontent.com/diyor011/apibest/master/api.json')
     .then(res => res.json())
@@ -14,32 +11,38 @@ fetch('https://raw.githubusercontent.com/diyor011/apibest/master/api.json')
         displayProducts(data);
     });
 
-
 function displayProducts(data) {
     products.innerHTML = "";
-    data.map(item => {
-        console.log(item);
+    data.forEach((item, index) => {
         let card = document.createElement("div");
-        card.className = 'bg-base-300 flex flex-col gap-2 w-1/4 max-w-[80%] mx-auto container p-10 rounded-lg shadow-lg shadow-emerald-500 border-2 border-success mt-10 items-center mb-10';
+        card.className = 'bg-base-300 flex flex-col gap-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-5 rounded-lg shadow-lg border border-success mt-5 items-center mb-5 opacity-0 transition-opacity duration-500 ease-in-out';
+        card.style.transitionDelay = `${index * 100}ms`; 
         card.innerHTML = `
-            <div class="text-xl">${item.id}</div>
+            <div class="text-xl font-bold">${item.id}</div>
             <div class="flex items-center justify-center">
-                <img src="${item.pic}" class="size-20 rounded-3xl" alt="" />
+                <img src="${item.pic}" class="h-40 w-40 object-cover rounded-xl" alt="${item.name}" />
             </div>
-            <div class="text-center">
-                <p class="text-2xl text-primary">${item.name}</p>
+            <div class="text-center mt-2">
+                <p class="text-2xl text-primary font-semibold">${item.name}</p>
             </div>
-            <div class="flex flex-col text-center">
-                <p class="text-base text-accent">$ ${item.price}</p>
-                <p class="text-base">${item.fulldesc}</p>
+            <div class="flex flex-col text-center mt-2">
+                <p class="text-lg text-accent">$${item.price}</p>
+                <p class="text-sm mt-1">${item.fulldesc}</p>
             </div>
         `;
         products.appendChild(card);
+        setTimeout(() => {
+            card.style.opacity = 1;
+        }, 50);
     });
 }
 
 input.addEventListener('input', function () {
     let searchText = input.value.toLowerCase();
     let filteredProducts = allProducts.filter(item => item.name.toLowerCase().includes(searchText));
-    displayProducts(filteredProducts);
+    products.style.opacity = 0;
+    setTimeout(() => {
+        displayProducts(filteredProducts);
+        products.style.opacity = 1;
+    }, 300); 
 });
